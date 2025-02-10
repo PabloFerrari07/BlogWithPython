@@ -1,10 +1,7 @@
 class Config:
     DEBUG = True
-    TESTING = True
-
-    #Configuración de base dedatos 
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@localhost/blog_db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:root@localhost:3306/blog_db"
 
 class ProductionConfig(Config):
     DEBUG = False
@@ -13,3 +10,4 @@ class DevelopmentConfig(Config):
     SECRET_KEY = 'dev'
     DEBUG = True
     TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@localhost/blog_db'  # <-- Asegúrate de que está aquí
