@@ -17,9 +17,55 @@ from flask import (
     url_for
 )
 
+from myBlog.Models.User import User
+from werkzeug.security import check_password_hash, generate_password_hash
+from myBlog import db
 auth = Blueprint('auth', __name__, url_prefix='/auth')
 
 #Registrar usuario
-@auth.route('/register', methods=['GET', 'POST'])
+@auth.route('/register', methods=['GET','POST'])
 def register():
-    return "registrar usuario"
+    if request.method == 'POST':
+        userName = request.form.get('userName') #obtenemos el nombre de usuario
+        password = request.form.get('password') #obtenemos la contraseña
+        user = User(userName, generate_password_hash(password)) #creamos un objeto de tipo User
+
+        error = None
+        if not userName :
+            error = 'se requiere nombre de usuario'
+        elif not password:
+            error = 'se requiere contraseña'
+
+        userName = User.query.filter_by(userName=userName).first() #buscamos si el nombre de usuario ya existe
+
+        if userName == None:
+            db.session.add(user) #agregamos el usuario a la base de datos
+            db.session.commit()
+        else:
+            error = f'el usuario {userName} ya existe'.format(userName)
+
+        flash(error)
+    return render_template('auth/register.html')
+
+#Iniciar Sesion
+@auth.route('/login', methods=['GET','POST'])
+def login():
+    if request.method == 'POST':
+        userName = request.form.get('userName') #obtenemos el nombre de usuario
+        password = request.form.get('password') #obtenemos la contraseña
+
+        error = None
+
+        user = User.query.filter_by(userName=userName).first() #buscamos si el nombre de usuario ya existe
+
+        if user == None:
+           error = 'usuario incorrecto'
+        elif not check_password_hash(user.password,password):
+            error = 'contraseña incorrecta'
+
+        if error is None:
+            session.clear()
+            session['user_id'] = user.id
+            #return redirect(url_for('index.html'))
+        flash(error)
+    return render_template('auth/login.html')

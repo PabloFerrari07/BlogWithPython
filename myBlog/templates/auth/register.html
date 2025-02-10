@@ -1,0 +1,17 @@
+{%extends 'base.html'%}
+
+{%block header%}
+<h2>{%block title%}Registrar usuario {%endblock%}</h2>
+{%endblock%}
+
+{%block content%}
+<form method="POST">
+    <label for="userName">Nombre de usuario</label>
+    <input type="text" name="userName" id="userName" required>
+
+    <label for="password">contraseña</label>
+    <input type="password" name="password" id="password" required>
+
+    <input type="submit" value="registrar">
+</form>
+{%endblock%}
