@@ -96,9 +96,9 @@ def update(id):
     return render_template('blog/update.html', post=post)
 
 #Delete post
-@blog.route('/blog/delete/<int:id>', methods=['POST'])
+@blog.route('/blog/delete/<int:id>')
 @login_required #decorador para requerir login
-def delete():
+def delete(id):
     post = get_post(id)
     db.session.delete(post)
     db.session.commit()
