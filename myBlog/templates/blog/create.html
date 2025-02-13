@@ -1,0 +1,17 @@
+{%extends 'base.html'%}
+
+{%block header%}
+<h2>{%block title%}crear una publicacion {%endblock%}</h2>
+{%endblock%}
+
+{%block content%}
+<form method="POST">
+    <label for="title">titulo</label>
+    <input type="text" name="title" id="title" required>
+
+    <label for="body">contenido</label>
+    <textarea name="body" id="body"></textarea>
+
+    <input type="submit" value="guardar">
+</form>
+{%endblock%}

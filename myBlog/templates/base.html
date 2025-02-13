@@ -8,13 +8,18 @@
 <body>
     <header>
         <div>
-            <a href="">
+            <a href="{{url_for('blog.index')}}">
                 <h1>Mi blog</h1>
             </a>
         </div>
         <nav>
-            <a href="">registrar</a>
-            <a href="">iniciar sesion</a>
+            {%if g.user%}
+            <samp>{{g.user.userName}}</samp>
+            <a href="{{url_for('auth.logout')}}">cerrar sesion</a>
+            {%else%}
+            <a href="{{url_for('auth.register')}}">registrar</a>
+            <a href="{{url_for('auth.login')}}">iniciar sesion</a>
+            {%endif%}
         </nav>
     </header>
     <section>

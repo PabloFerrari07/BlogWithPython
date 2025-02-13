@@ -17,6 +17,8 @@ from flask import (
     url_for
 )
 
+import functools
+
 from myBlog.Models.User import User
 from werkzeug.security import check_password_hash, generate_password_hash
 from myBlog import db
@@ -41,6 +43,7 @@ def register():
         if userName == None:
             db.session.add(user) #agregamos el usuario a la base de datos
             db.session.commit()
+            return redirect(url_for('auth.login'))
         else:
             error = f'el usuario {userName} ya existe'.format(userName)
 
@@ -66,6 +69,31 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user.id
-            #return redirect(url_for('index.html'))
+            return redirect(url_for('blog.index'))
         flash(error)
     return render_template('auth/login.html')
+
+
+@auth.before_app_request #se ejecuta antes de cualquier peticion
+def load_logged_in_user():
+    user_id = session.get('user_id') #obtenemos el id del usuario
+    if user_id is None: #si no hay un usuario logeado
+        g.user = None #g.user es igual a None
+    else:
+        g.user = User.query.get_or_404(user_id) #g.user es igual al usuario con el id user_id
+
+    
+@auth.route('/logout')
+def logout():
+    session.clear() #limpiamos la sesion
+    return redirect(url_for('blog.index')) #redirigimos a la vista index.html
+
+
+def login_required(view):
+    @functools.wraps(view) #decorador para que la funcion view tenga los mismos atributos que la funcion original
+    def wrapped_view(**kwargs):
+        if g.user is None: #si no hay un usuario logeado
+            return redirect(url_for('auth.login'))
+        return view(**kwargs) #retornamos la funcion view
+
+    return wrapped_view  #retornamos la funcion wrapped_view

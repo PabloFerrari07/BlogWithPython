@@ -12,6 +12,9 @@ db = SQLAlchemy(app)
 from myBlog.views.auth import auth
 app.register_blueprint(auth)
 
+from myBlog.views.blog import blog
+app.register_blueprint(blog)
+
 # Crear la base de datos dentro del contexto de la aplicación
 with app.app_context():
     db.create_all()
